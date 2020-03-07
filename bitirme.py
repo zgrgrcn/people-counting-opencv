@@ -17,8 +17,8 @@ SAVEOUTPUT = True
 
 
 input='videos/yapisik.mp4'
-minConfidence=0.6
-skip_frames=15
+minConfidence=0.2
+skip_frames=5
 
 print("Model Loading...")
 net = cv2.dnn.readNetFromCaffe("mobilenet_ssd/MobileNetSSD_deploy.prototxt", "mobilenet_ssd/MobileNetSSD_deploy.caffemodel")

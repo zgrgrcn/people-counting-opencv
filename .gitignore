@@ -1,3 +1,4 @@
 #ignore-do not upload or dowload any video
 .output
 .videos
+/output/

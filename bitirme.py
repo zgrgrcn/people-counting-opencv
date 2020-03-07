@@ -16,7 +16,7 @@ DEBUG = True
 SAVEOUTPUT = True
 
 
-input='videos/ex1.mp4'
+input='videos/yapisik.mp4'
 minConfidence=0.6
 skip_frames=15
 

@@ -15,21 +15,17 @@ DEBUG = True
 #save videos
 SAVEOUTPUT = True
 
-
-input='videos/yapisik.mp4'
-minConfidence=0.2
-skip_frames=5
+input='videos/ex2.mp4'
+minConfidence=0.8
+skip_frames=30
 
 print("Model Loading...")
 net = cv2.dnn.readNetFromCaffe("mobilenet_ssd/MobileNetSSD_deploy.prototxt", "mobilenet_ssd/MobileNetSSD_deploy.caffemodel")
 
 print("opening video file...")
 vs = cv2.VideoCapture(input)
-
-writer = None
 W = 640
 H = 360
-
 ct = CentroidTracker(maxDisappeared=40, maxDistance=50)
 trackers = []
 trackableObjects = {}
@@ -39,22 +35,26 @@ totalUp = 0
 oldtotalDown = 0
 oldtotalUp = 0
 directionTextArray = []
+writer = None
+
 fps = FPS().start()
 print('Start Time: {:}'.format(datetime.datetime.now()))
+
 while True:
     frame = vs.read()
     frame = frame[1]
-    if SAVEOUTPUT and writer is None:
+    frame=cv2.resize(frame,(W,H))
+
+    if SAVEOUTPUT is not None and writer is None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter('output/output{:}.avi'.format(datetime.datetime.now()), fourcc, 30,
-            (W, H), True)
+        writer = cv2.VideoWriter('output/output{:}.avi'.format(datetime.datetime.now()), fourcc, 30,(W, H), True)
     if frame is None:
         break
 
     frame = imutils.resize(frame, width=W,height=H)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     rects = []
-    #Her skip_frames bir detection yapılıyor çünkü bir maliyetli bir işlem
+    #Her skip_frames bir detection yapılıyor çünkü bu maliyetli bir işlem
     if totalFrames % skip_frames == 0:
         trackers = []
 
@@ -169,3 +169,5 @@ print('End Time: {:}'.format(datetime.datetime.now()))
 
 if writer is not None:
     writer.release()
+
+vs.release()

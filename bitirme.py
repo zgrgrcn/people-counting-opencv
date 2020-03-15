@@ -3,8 +3,10 @@ import datetime
 import cv2
 import dlib
 import imutils
+import time
 import numpy as np
 from imutils.video import FPS
+from imutils.video import VideoStream
 
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
@@ -12,16 +14,21 @@ from pyimagesearch.trackableobject import TrackableObject
 DEBUG = True
 #save videos
 SAVEOUTPUT = True
+CAPTUREFROMWEBCAM = True
 
 input='videos/ex2.mp4'
-minConfidence=0.8
+minConfidence=0.4
 skip_frames=30
 
 print("Model Loading...")
 net = cv2.dnn.readNetFromCaffe("mobilenet_ssd/MobileNetSSD_deploy.prototxt", "mobilenet_ssd/MobileNetSSD_deploy.caffemodel")
 
 print("opening video file...")
-vs = cv2.VideoCapture(input)
+if CAPTUREFROMWEBCAM is False:
+    vs = cv2.VideoCapture(input)
+else:
+    vs = VideoStream(src=1).start()
+    time.sleep(2.0)
 W = 640
 H = 360
 ct = CentroidTracker(maxDisappeared=40, maxDistance=50)
@@ -40,7 +47,8 @@ print('Start Time: {:}'.format(datetime.datetime.now()))
 
 while True:
     frame = vs.read()
-    frame = frame[1]
+    if CAPTUREFROMWEBCAM is False:
+        frame = frame[1]
     if frame is None:
         break
 
@@ -167,5 +175,7 @@ print('End Time: {:}'.format(datetime.datetime.now()))
 
 if writer is not None:
     writer.release()
-
-vs.release()
+if CAPTUREFROMWEBCAM:
+    vs.stop()
+else:
+    vs.release()

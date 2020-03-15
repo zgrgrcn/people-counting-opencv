@@ -1,15 +1,13 @@
+import datetime
+
+import cv2
+import dlib
+import imutils
+import numpy as np
+from imutils.video import FPS
+
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
-from imutils.video import VideoStream
-from imutils.video import FPS
-import numpy as np
-import argparse
-import imutils
-import time
-import dlib
-import cv2
-import sys
-import datetime
 
 DEBUG = True
 #save videos
@@ -43,16 +41,16 @@ print('Start Time: {:}'.format(datetime.datetime.now()))
 while True:
     frame = vs.read()
     frame = frame[1]
-    frame=cv2.resize(frame,(W,H))
+    if frame is None:
+        break
+
+    frame = imutils.resize(frame, width=W, height=H)
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     if SAVEOUTPUT is not None and writer is None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         writer = cv2.VideoWriter('output/output{:}.avi'.format(datetime.datetime.now()), fourcc, 30,(W, H), True)
-    if frame is None:
-        break
 
-    frame = imutils.resize(frame, width=W,height=H)
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     rects = []
     #Her skip_frames bir detection yapılıyor çünkü bu maliyetli bir işlem
     if totalFrames % skip_frames == 0:
